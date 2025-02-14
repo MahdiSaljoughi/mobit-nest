@@ -13,25 +13,19 @@ enum UserRole {
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
-  user_name      String?   @unique
+  id             Int        @id @default(autoincrement())
+  user_name      String?    @unique
   first_name     String?
   last_name      String?
-  email          String?   @unique
-  phone          String    @unique
-  role           UserRole  @default(CUSTOMER)
-  email_verified Boolean   @default(false)
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @updatedAt
+  email          String?    @unique
+  phone          String     @unique
+  role           UserRole   @default(CUSTOMER)
+  email_verified Boolean    @default(false)
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
   products       Product[]
   orders         Order[]
-}
-
-model Otp {
-  id         Int      @id @default(autoincrement())
-  phone      String
-  code       String
-  expires_at DateTime
+  Category       Category[]
 }
 
 model Product {
@@ -57,12 +51,37 @@ model Product {
   variants         ProductVariant[]
 }
 
+model Order {
+  id               Int            @id @unique @default(autoincrement())
+  customer_id      Int
+  status_order     String
+  delivery_address String
+  payment_method   String
+  amount           String
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  customer         User           @relation(fields: [customer_id], references: [id])
+  products         ProductOrder[]
+}
+
 model Category {
-  id        Int       @id @default(autoincrement())
-  title     String
-  title_eng String
-  url       String
-  products  Product[]
+  id         Int       @id @default(autoincrement())
+  title      String
+  title_eng  String
+  url        String
+  created_by Int
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  author     User      @relation(fields: [created_by], references: [id])
+  products   Product[]
+}
+
+model Otp {
+  id         Int      @id @default(autoincrement())
+  phone      String
+  code       String
+  expires_at DateTime
+  created_at DateTime @default(now())
 }
 
 model ProductVariant {
@@ -82,19 +101,6 @@ model ProductImage {
   url        String
   product_id Int
   product    Product @relation(fields: [product_id], references: [id])
-}
-
-model Order {
-  id               Int            @id @unique @default(autoincrement())
-  customer_id      Int
-  status_order     String
-  delivery_address String
-  payment_method   String
-  amount           String
-  created_at       DateTime       @default(now())
-  updated_at       DateTime       @updatedAt
-  customer         User           @relation(fields: [customer_id], references: [id])
-  products         ProductOrder[]
 }
 
 model ProductOrder {

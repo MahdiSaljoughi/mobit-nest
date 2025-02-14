@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { UploadModule } from './upload/upload.module';
+import { CategoriesModule } from './categories/categories.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { UploadModule } from './upload/upload.module';
     PrismaModule,
     UsersModule,
     UploadModule,
+    CategoriesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

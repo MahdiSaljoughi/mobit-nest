@@ -1,54 +1,51 @@
 import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const userCreate = await this.prisma.user.create({
+  async create(createUserDto: Prisma.UserCreateInput) {
+    return await this.prisma.user.create({
       data: createUserDto,
     });
-
-    return userCreate;
   }
 
   async findAll() {
-    const allUsers = await this.prisma.user.findMany();
-
-    return allUsers;
+    return await this.prisma.user.findMany();
   }
 
   async findOne(id: number) {
-    const userFindOne = await this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: {
         id: id,
       },
     });
-
-    return userFindOne;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const userUpdate = await this.prisma.user.update({
+  async update(id: number, updateUserDto: Prisma.UserUpdateInput) {
+    return await this.prisma.user.update({
       where: {
         id: id,
       },
       data: updateUserDto,
     });
-
-    return userUpdate;
   }
 
   async remove(id: number) {
-    const userRemove = await this.prisma.user.delete({
+    return await this.prisma.user.delete({
       where: {
         id: id,
       },
     });
+  }
 
-    return userRemove;
+  async findByPhone(phone: string) {
+    return await this.prisma.user.findUnique({
+      where: {
+        phone: phone,
+      },
+    });
   }
 }
