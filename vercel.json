@@ -4,6 +4,11 @@
     {
       "src": "src/main.ts",
       "use": "@vercel/node"
+    },
+    {
+      "src": "prisma/schema.prisma",
+      "use": "@vercel/node",
+      "buildCommand": "npx prisma generate"
     }
   ],
   "routes": [
