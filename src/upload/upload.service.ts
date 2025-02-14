@@ -13,32 +13,30 @@ export class UploadService {
     });
   }
 
-  async uploadProductImage(file: Express.Multer.File, productId: string) {
-    return new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: 'products' },
-        (error, result) => {
-          if (error) return reject(new Error(error.message));
-          this.prisma.productImage
-            .create({
-              data: {
-                url: result!.secure_url,
-                product_id: Number(productId),
-              },
-            })
-            .then((productImage) => resolve(productImage))
-            .catch((dbError) => {
-              const errorMessage =
-                typeof dbError === 'string'
-                  ? dbError
-                  : 'Database error occurred';
-              reject(new Error(errorMessage));
-            });
-        },
-      );
+  async uploadProductImages(files: Express.Multer.File[], productId: string) {
+    const uploadPromises = files.map((file) => {
+      return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: 'products' },
+          (error, result) => {
+            if (error) return reject(new Error(error.message));
+            this.prisma.productImage
+              .create({
+                data: {
+                  url: result!.secure_url,
+                  product_id: Number(productId),
+                },
+              })
+              .then((productImage) => resolve(productImage))
+              .catch(() => reject(new Error('Database error occurred')));
+          },
+        );
 
-      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+        streamifier.createReadStream(file.buffer).pipe(uploadStream);
+      });
     });
+
+    return Promise.all(uploadPromises);
   }
 
   async deleteProductImage(imageId: number) {
@@ -54,12 +52,24 @@ export class UploadService {
       const filename = urlParts[urlParts.length - 1];
       const publicId = `products/${filename.split('.')[0]}`;
 
-      const cloudinaryResponse = await cloudinary.uploader.destroy(publicId, {
-        invalidate: true,
-      });
+      const cloudinaryResponse: unknown = await cloudinary.uploader.destroy(
+        publicId,
+        {
+          invalidate: true,
+        },
+      );
 
-      if (cloudinaryResponse.result !== 'ok') {
-        throw new Error('Failed to delete image from Cloudinary');
+      if (
+        typeof cloudinaryResponse === 'object' &&
+        cloudinaryResponse !== null &&
+        'result' in cloudinaryResponse
+      ) {
+        const response = cloudinaryResponse as { result: string };
+        if (response.result !== 'ok') {
+          throw new Error('Failed to delete image from Cloudinary');
+        }
+      } else {
+        throw new Error('Invalid response from Cloudinary');
       }
 
       await this.prisma.productImage.delete({
