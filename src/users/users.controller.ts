@@ -1,3 +1,4 @@
+import { RoleGuard } from './../role/role.guard';
 import { AuthGuard } from './../auth/auth.guard';
 import {
   Controller,
@@ -11,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
-import { RoleGuard } from 'src/role/role.guard';
 
 @Controller('users')
 @UseGuards(AuthGuard, RoleGuard)
