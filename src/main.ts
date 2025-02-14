@@ -6,6 +6,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: ['http://localhost:3000', 'https://moobit.vercel.app'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
 
   await app.listen(process.env.NEST_PORT ?? 5555);
