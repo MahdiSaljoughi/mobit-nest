@@ -13,12 +13,19 @@ export class CategoriesService {
   }
 
   async findAll() {
-    return await this.prisma.category.findMany();
+    return await this.prisma.category.findMany({
+      include: {
+        author: { select: { user_name: true } },
+      },
+    });
   }
 
   async findOne(id: number) {
     return await this.prisma.category.findUnique({
       where: { id },
+      include: {
+        author: { select: { user_name: true } },
+      },
     });
   }
 

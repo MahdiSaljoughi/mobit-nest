@@ -11,13 +11,26 @@ export class ProductsService {
   }
 
   async findAll() {
-    return await this.prisma.product.findMany();
+    return await this.prisma.product.findMany({
+      include: {
+        author: { select: { user_name: true } },
+        category: true,
+        variants: true,
+        images: true,
+      },
+    });
   }
 
   async findBySlug(slug: string) {
     return await this.prisma.product.findUnique({
       where: {
         slug,
+      },
+      include: {
+        category: true,
+        variants: true,
+        images: true,
+        author: { select: { user_name: true } },
       },
     });
   }
@@ -26,6 +39,12 @@ export class ProductsService {
     return await this.prisma.product.findUnique({
       where: {
         id,
+      },
+      include: {
+        category: true,
+        variants: true,
+        images: true,
+        author: { select: { user_name: true } },
       },
     });
   }

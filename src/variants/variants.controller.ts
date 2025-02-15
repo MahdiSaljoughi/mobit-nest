@@ -1,3 +1,5 @@
+import { AuthGuard } from './../auth/auth.guard';
+import { RoleGuard } from './../role/role.guard';
 import {
   Controller,
   Get,
@@ -6,11 +8,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { VariantsService } from './variants.service';
 import { Prisma } from '@prisma/client';
 
 @Controller('variants')
+@UseGuards(AuthGuard, RoleGuard)
 export class VariantsController {
   constructor(private readonly variantsService: VariantsService) {}
 
