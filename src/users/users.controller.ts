@@ -9,9 +9,17 @@ import {
   Param,
   Delete,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
+import { Request as ExpressRequest } from 'express';
+
+interface UserInfoRequest extends ExpressRequest {
+  user: {
+    id: number;
+  };
+}
 
 @Controller('users')
 @UseGuards(AuthGuard, RoleGuard)
@@ -26,6 +34,11 @@ export class UsersController {
   @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get('info')
+  getInfo(@Request() req: UserInfoRequest) {
+    return this.usersService.getInfo(req.user.id);
   }
 
   @Get(':id')
