@@ -12,10 +12,13 @@ export class ProductsService {
 
   async findAll() {
     return await this.prisma.product.findMany({
+      orderBy: { id: 'asc' },
       include: {
         author: { select: { user_name: true } },
         category: true,
-        variants: true,
+        variants: {
+          orderBy: { id: 'asc' },
+        },
         images: true,
       },
     });
@@ -28,7 +31,9 @@ export class ProductsService {
       },
       include: {
         category: true,
-        variants: true,
+        variants: {
+          orderBy: { id: 'asc' },
+        },
         images: true,
         author: { select: { user_name: true } },
       },
