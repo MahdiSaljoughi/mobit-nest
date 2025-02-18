@@ -20,6 +20,11 @@ enum OrderStatus {
   CANCELED
 }
 
+enum OrderPayMentMethod {
+  ONLINE
+  FACETOFACE
+}
+
 model User {
   id             Int        @id @default(autoincrement())
   user_name      String?    @unique
@@ -60,15 +65,15 @@ model Product {
 }
 
 model Order {
-  id               Int            @id @unique @default(autoincrement())
+  id               Int                @id @unique @default(autoincrement())
   customer_id      Int
   total_price      Int
-  payment_method   String
+  payment_method   OrderPayMentMethod
   delivery_address String
-  updated_at       DateTime       @updatedAt
-  created_at       DateTime       @default(now())
-  status           OrderStatus    @default(PENDING)
-  customer         User           @relation(fields: [customer_id], references: [id])
+  updated_at       DateTime           @updatedAt
+  created_at       DateTime           @default(now())
+  status           OrderStatus        @default(PENDING)
+  customer         User               @relation(fields: [customer_id], references: [id])
   products         ProductOrder[]
 }
 
@@ -115,9 +120,13 @@ model ProductOrder {
   id         Int      @id @unique @default(autoincrement())
   order_id   Int
   product_id Int
+  price      Int
   quantity   Int
+  color_name String
+  hex_code   String
+  image      String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  order      Order    @relation(fields: [order_id], references: [id])
+  order      Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
   product    Product  @relation(fields: [product_id], references: [id])
 }

@@ -16,12 +16,12 @@ export class OrdersService {
     return await this.prisma.order.findMany({
       orderBy: { id: 'asc' },
       include: {
+        customer: true,
         products: {
           include: {
             product: {
               select: {
                 title: true,
-                title_eng: true,
                 slug: true,
               },
             },
