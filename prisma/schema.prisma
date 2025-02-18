@@ -12,6 +12,14 @@ enum UserRole {
   ADMIN
 }
 
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
+
 model User {
   id             Int        @id @default(autoincrement())
   user_name      String?    @unique
@@ -54,22 +62,22 @@ model Product {
 model Order {
   id               Int            @id @unique @default(autoincrement())
   customer_id      Int
-  status_order     String
-  delivery_address String
+  total_price      Int
   payment_method   String
-  amount           String
-  created_at       DateTime       @default(now())
+  delivery_address String
   updated_at       DateTime       @updatedAt
+  created_at       DateTime       @default(now())
+  status           OrderStatus    @default(PENDING)
   customer         User           @relation(fields: [customer_id], references: [id])
   products         ProductOrder[]
 }
 
 model Category {
   id         Int       @id @default(autoincrement())
+  created_by Int
   title      String
   title_eng  String
   url        String
-  created_by Int
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   author     User      @relation(fields: [created_by], references: [id])
@@ -104,10 +112,12 @@ model ProductImage {
 }
 
 model ProductOrder {
-  id         Int     @id @unique @default(autoincrement())
+  id         Int      @id @unique @default(autoincrement())
   order_id   Int
   product_id Int
   quantity   Int
-  order      Order   @relation(fields: [order_id], references: [id])
-  product    Product @relation(fields: [product_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  order      Order    @relation(fields: [order_id], references: [id])
+  product    Product  @relation(fields: [product_id], references: [id])
 }
