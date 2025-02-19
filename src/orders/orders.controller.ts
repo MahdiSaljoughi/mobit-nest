@@ -20,8 +20,16 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  create(@Body() createOrderDto: Prisma.OrderCreateInput) {
-    return this.ordersService.create(createOrderDto);
+  create(
+    @Request() req: TUserRequestId,
+    @Body() createOrderDto: Omit<Prisma.OrderCreateInput, 'customer_id'>,
+  ) {
+    return this.ordersService.create({
+      ...createOrderDto,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      customer_id: req.user.id,
+    });
   }
 
   @Get()
@@ -43,7 +51,9 @@ export class OrdersController {
   }
 
   @Post('products')
-  createProductOrder(@Body() createOrderDto: Prisma.ProductOrderCreateInput) {
+  createProductOrder(
+    @Body() createOrderDto: Prisma.ProductOrderCreateManyInput[],
+  ) {
     return this.ordersService.createProductOrder(createOrderDto);
   }
 
@@ -63,14 +73,14 @@ export class OrdersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req: UserRequestId) {
+  findOne(@Param('id') id: string, @Request() req: TUserRequestId) {
     return this.ordersService.findOne(+id, req.user.id);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Request() req: UserRequestId,
+    @Request() req: TUserRequestId,
     @Body() updateOrderDto: Prisma.OrderUpdateInput,
   ) {
     return this.ordersService.update(+id, req.user.id, updateOrderDto);

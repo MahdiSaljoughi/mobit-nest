@@ -30,7 +30,7 @@ export class UsersController {
   }
 
   @Get('info')
-  getInfo(@Request() req: UserRequestId) {
+  getInfo(@Request() req: TUserRequestId) {
     return this.usersService.getInfo(req.user.id);
   }
 

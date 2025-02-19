@@ -12,14 +12,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { Request as ExpressRequest } from 'express';
 import { Prisma } from '@prisma/client';
-
-interface UserIdRequest extends ExpressRequest {
-  user: {
-    id: number;
-  };
-}
 
 @Controller('products')
 export class ProductsController {
@@ -28,7 +21,7 @@ export class ProductsController {
   @Post()
   @UseGuards(AuthGuard, RoleGuard)
   create(
-    @Request() req: UserIdRequest,
+    @Request() req: TUserRequestId,
     @Body() createProductDto: Omit<Prisma.ProductCreateInput, 'created_by'>,
   ) {
     return this.productsService.create({

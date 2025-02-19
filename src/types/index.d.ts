@@ -1,4 +1,4 @@
-declare type UserRequestId = {
+declare type TUserRequestId = {
   user: {
     id: number;
   };

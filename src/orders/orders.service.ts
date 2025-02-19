@@ -78,8 +78,10 @@ export class OrdersService {
     });
   }
 
-  async createProductOrder(createOrderDto: Prisma.ProductOrderCreateInput) {
-    return await this.prisma.productOrder.create({
+  async createProductOrder(
+    createOrderDto: Prisma.ProductOrderCreateManyInput[],
+  ) {
+    return await this.prisma.productOrder.createMany({
       data: createOrderDto,
     });
   }
