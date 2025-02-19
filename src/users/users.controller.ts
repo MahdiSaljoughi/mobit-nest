@@ -36,13 +36,13 @@ export class UsersController {
     return this.usersService.getInfo(req.user.id);
   }
 
-  @Patch('info/:id')
+  @Patch('info')
   @UseGuards(AuthGuard)
   updateInfo(
-    @Param('id') id: string,
+    @Request() req: TUserRequestId,
     @Body() updateUserDto: Prisma.UserUpdateInput,
   ) {
-    return this.usersService.updateInfo(+id, updateUserDto);
+    return this.usersService.updateInfo(req.user.id, updateUserDto);
   }
 
   @Get(':id')
