@@ -38,6 +38,17 @@ export class OrdersController {
     return this.ordersService.findAll();
   }
 
+  @Get('user')
+  @UseGuards(AuthGuard)
+  findAllOrderUser(@Request() req: TUserRequestId) {
+    return this.ordersService.findAllOrderUser(Number(req.user.id));
+  }
+
+  @Patch('user/:id')
+  canceleOrder(@Param('id') id: string, @Request() req: TUserRequestId) {
+    return this.ordersService.canceleOrder(+id, req.user.id);
+  }
+
   @Get('products')
   @UseGuards(AuthGuard, RoleGuard)
   findAllProductOrder() {
@@ -70,15 +81,6 @@ export class OrdersController {
   @UseGuards(AuthGuard, RoleGuard)
   removeProductOrder(@Param('id') id: string) {
     return this.ordersService.removeProductOrder(+id);
-  }
-
-  @Patch('user/:id')
-  updateOrderUser(
-    @Param('id') id: string,
-    @Request() req: TUserRequestId,
-    @Body() updateOrderDto: Prisma.OrderUpdateInput,
-  ) {
-    return this.ordersService.updateOrderUser(+id, req.user.id, updateOrderDto);
   }
 
   @Get(':id')
