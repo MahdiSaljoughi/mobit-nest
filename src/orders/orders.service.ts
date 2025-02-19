@@ -56,7 +56,16 @@ export class OrdersService {
     });
   }
 
-  async update(
+  async update(id: number, updateOrderDto: Prisma.OrderUpdateInput) {
+    return await this.prisma.order.update({
+      where: {
+        id,
+      },
+      data: updateOrderDto,
+    });
+  }
+
+  async updateOrderUser(
     id: number,
     user_id: number,
     updateOrderDto: Prisma.OrderUpdateInput,

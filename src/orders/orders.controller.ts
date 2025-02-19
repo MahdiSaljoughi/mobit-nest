@@ -72,6 +72,15 @@ export class OrdersController {
     return this.ordersService.removeProductOrder(+id);
   }
 
+  @Patch('user/:id')
+  updateOrderUser(
+    @Param('id') id: string,
+    @Request() req: TUserRequestId,
+    @Body() updateOrderDto: Prisma.OrderUpdateInput,
+  ) {
+    return this.ordersService.updateOrderUser(+id, req.user.id, updateOrderDto);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @Request() req: TUserRequestId) {
     return this.ordersService.findOne(+id, req.user.id);
@@ -80,10 +89,9 @@ export class OrdersController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Request() req: TUserRequestId,
     @Body() updateOrderDto: Prisma.OrderUpdateInput,
   ) {
-    return this.ordersService.update(+id, req.user.id, updateOrderDto);
+    return this.ordersService.update(+id, updateOrderDto);
   }
 
   @Delete(':id')
